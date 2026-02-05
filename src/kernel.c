@@ -10,6 +10,9 @@
 #include "status.h"
 #include "gdt/gdt.h"
 #include "task/tss.h"
+#include "task/task.h"
+#include "task/process.h"
+#include "isr80h/isr80h.h"
 #include <stdint.h>
 #include <stddef.h>
 
@@ -66,6 +69,11 @@ void panic(const char* msg) {
     	while (1) {}
 }
 
+void kernel_page() {
+	kernel_registers();
+	paging_switch(kernel_chunk);
+}
+
 struct tss tss;
 
 struct gdt gdt_real[ORCAOS_TOTAL_GDT_SEGMENTS];
@@ -98,4 +106,14 @@ void kernel_main() {
 	kernel_chunk = paging_new_4gb(PAGING_IS_WRITEABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
 	paging_switch(kernel_chunk);
 	enable_paging();
+
+	isr80h_register_commands();
+
+	struct process* process = 0;
+	int res = process_load("0:/blank.bin", &process);
+	if (res != ORCAOS_ALL_OK) {
+		panic("Failed to load blank.bin\n");
+	}
+
+	task_run_first_ever_task();
 }
