@@ -9,5 +9,6 @@
 #define EFSNOTUS 5
 #define ERDONLY 8
 #define EUNIMP 7
+#define EISTAKEN 8
 
 #endif

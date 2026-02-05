@@ -94,3 +94,16 @@ int istrncmp(const char* s1, const char* s2, int n) {
 
     return 0;
 }
+
+char* strncpy(char* dest, const char* source, int count) {
+	for (int i = 0; i < count - 1; i++) {
+		if (source[i] == 0) {
+			break;
+		}
+
+		dest[i] = source[i];
+	}
+	
+	dest[count - 1] = 0;
+	return dest;
+}
