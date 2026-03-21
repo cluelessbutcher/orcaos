@@ -1,0 +1,18 @@
+MESA-INTEL: warning: Ivy Bridge Vulkan support is incomplete
+libva error: /usr/lib64/dri/iHD_drv_video.so init failed
+Created TensorFlow Lite XNNPACK delegate for CPU.
+Attempting to use a delegate that only supports static-sized tensors with a graph that has dynamic-sized tensors (tensor#-1 is a dynamic-sized tensor).
+[66841:66841:0322/020229.428019:ERROR:components/dbus/xdg/request.cc:165] Request cancelled by user.
+[66897:66897:0322/020229.456398:ERROR:ui/gl/gl_surface_presentation_helper.cc:260] GetVSyncParametersIfAvailable() failed for 1 times!
+[66897:66897:0322/020229.462034:ERROR:ui/gl/gl_surface_presentation_helper.cc:260] GetVSyncParametersIfAvailable() failed for 2 times!
+[66897:66897:0322/020231.347988:ERROR:ui/gl/gl_surface_presentation_helper.cc:260] GetVSyncParametersIfAvailable() failed for 3 times!
+[66841:66841:0322/021222.820027:ERROR:components/dbus/xdg/request.cc:165] Request cancelled by user.
+[66841:66841:0322/022655.490110:ERROR:ui/gfx/x/atom_cache.cc:232] Add chromium/from-privileged to kAtomsToCache
+MESA-INTEL: warning: Ivy Bridge Vulkan support is incomplete
+libva error: /usr/lib64/dri/iHD_drv_video.so init failed
+[67919:67919:0322/022843.636729:ERROR:ui/gl/gl_surface_presentation_helper.cc:260] GetVSyncParametersIfAvailable() failed for 1 times!
+[67919:67919:0322/022843.649200:ERROR:ui/gl/gl_surface_presentation_helper.cc:260] GetVSyncParametersIfAvailable() failed for 2 times!
+Created TensorFlow Lite XNNPACK delegate for CPU.
+Attempting to use a delegate that only supports static-sized tensors with a graph that has dynamic-sized tensors (tensor#-1 is a dynamic-sized tensor).
+[67919:67919:0322/022849.229423:ERROR:ui/gl/gl_surface_presentation_helper.cc:260] GetVSyncParametersIfAvailable() failed for 3 times!
+[67863:67863:0322/025117.450526:ERROR:components/dbus/xdg/request.cc:165] Request cancelled by user.
