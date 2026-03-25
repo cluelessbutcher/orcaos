@@ -1,5 +1,4 @@
-#ifndef FILE_H
-#define FILE_H
+#pragma once
 
 #include "pparser.h"
 #include <stdint.h>
@@ -65,5 +64,3 @@ int fstat(int fd, struct file_stat* stat);
 int fclose(int fd);
 void fs_insert_filesystem(struct filesystem* filesystem);
 struct filesystem* fs_resolve(struct disk* disk);
-
-#endif

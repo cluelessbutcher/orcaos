@@ -5,12 +5,15 @@
 #include "memory/paging/paging.h"
 #include "disk/disk.h"
 #include "fs/pparser.h"
-#include "string/string.h"
 #include "disk/streamer.h"
 #include "string/string.h"
 #include "fs/file.h"
-#include <stdint.h>
+#include "gdt/gdt.h"
+#include "config.h"
+#include "memory/memory.h"
+#include "task/tss.h"
 #include <stddef.h>
+#include <stdint.h>
 
 uint16_t* video_mem = 0;
 uint16_t terminal_row = 0;
@@ -65,9 +68,26 @@ void panic(const char* message) {
     while(1) {}
 }
 
+struct tss tss;
+struct gdt gdt_real[ORCAOS_TOTAL_GDT_SEGMENTS];
+struct gdt_structured gdt_structured[ORCAOS_TOTAL_GDT_SEGMENTS] = {
+    {.base = 0x00, .limit = 0x00, .type = 0x00},
+    {.base = 0x00, .limit = 0xffffffff, .type = 0x9a},
+    {.base = 0x00, .limit = 0xffffffff, .type = 0x92},
+    {.base = 0x00, .limit = 0xffffffff, .type = 0xf8},
+    {.base = 0x00, .limit = 0xffffffff, .type = 0xf2},
+    {.base = (uint32_t)&tss, .limit = sizeof(tss), .type = 0xE9},
+};
+
 void kernel_main() {
 	terminal_init();
   	print("Hello, World!\n");
+
+    memset(gdt_real, 0x00, sizeof(gdt_real));
+    gdt_structured_to_gdt(gdt_real, gdt_structured, ORCAOS_TOTAL_GDT_SEGMENTS);
+    
+    // Load the GDT
+    gdt_load(gdt_real, sizeof(gdt_real));
 
     // Initialize the kernel heap
     kheap_init();
@@ -81,6 +101,14 @@ void kernel_main() {
     // Initialize the interrupt descriptor table
 	idt_init();
 
+    // Setup the TSS
+    memset(&tss, 0x00, sizeof(tss));
+    tss.esp0 = 0x600000;
+    tss.ss0 = KERNEL_DATA_SELECTOR;
+
+    // Load the TSS
+    tss_load(0x28);
+        
     // Setup paging
     kernel_chunk = paging_new_4gb(PAGING_IS_WRITEABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
 

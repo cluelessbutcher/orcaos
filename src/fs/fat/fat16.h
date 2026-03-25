@@ -1,8 +1,5 @@
-#ifndef FAT16_H
-#define FAT16_H
+#pragma once
 
 #include "fs/file.h"
 
 struct filesystem* fat16_init();
-
-#endif
