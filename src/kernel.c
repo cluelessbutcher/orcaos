@@ -59,6 +59,12 @@ void print(const char* message) {
 }
 
 static struct paging_4gb_chunk* kernel_chunk = 0;
+
+void panic(const char* message) {
+    print(message);
+    while(1) {}
+}
+
 void kernel_main() {
 	terminal_init();
   	print("Hello, World!\n");
