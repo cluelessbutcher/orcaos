@@ -1,5 +1,4 @@
-#ifndef STATUS_H
-#define STATUS_H
+#pragma once
 
 #define ORCAOS_ALL_OK 0
 #define EIO 1
@@ -9,5 +8,4 @@
 #define EFSNOTUS 5
 #define ERDONLY 6
 #define EUNIMP 7
-
-#endif
+#define EISTKN 8
