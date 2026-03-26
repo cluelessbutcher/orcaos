@@ -3,7 +3,7 @@ section .text
 global gdt_load
 
 gdt_load:
-    mov eax, [ebp+4]
+    mov eax, [esp+4]
     mov [gdt_descriptor+2], eax
     mov ax, [esp+8]
     mov [gdt_descriptor], ax
