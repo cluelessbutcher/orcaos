@@ -12,6 +12,15 @@ struct process {
     void* ptr;
     void* stack;
     uint32_t size;
+
+    struct keyboard_buffer {
+        char buffer[ORCAOS_KEYBOARD_BUFFER_SIZE];
+        int tail;
+        int head;
+        
+    } keyboard;
 };
 
+struct process* process_current();
+int process_load(const char* filename, struct process** process);
 int process_load_for_slot(const char* filename, struct process** process, int process_slot);

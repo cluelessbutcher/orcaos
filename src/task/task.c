@@ -3,6 +3,9 @@
 #include "status.h"
 #include "memory/memory.h"
 #include "memory/heap/kheap.h"
+#include "idt/idt.h"
+#include "memory/paging/paging.h"
+#include "string/string.h"
 
 struct task* current_task = 0;
 struct task* task_tail = 0;
@@ -30,6 +33,7 @@ struct task* task_new(struct process* process) {
     if (task_head == 0) {
         task_head = task;
         task_tail = task;
+        current_task = task;
         goto out;
     }
 
@@ -81,7 +85,71 @@ int task_free(struct task* task) {
 
 int task_switch(struct task* task) {
     current_task = task;
-    paging_switch(task->page_directory->directory_entry);
+    paging_switch(task->page_directory);
+    return 0;
+}
+
+int copy_string_from_task(struct task* task, void* virtual, void* phys, int max) {
+    if (max >= PAGING_PAGE_SIZE) {
+        return -EINVARG;
+    }
+
+    int res = 0;
+    char* tmp = kzalloc(max);
+    if (!tmp) {
+        res = -ENOMEM;
+        goto out;
+    }
+
+    uint32_t* task_directory = task->page_directory->directory_entry;
+    uint32_t old_entry = paging_get(task_directory, tmp);
+    paging_map(task->page_directory, tmp, tmp, PAGING_IS_WRITEABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
+    paging_switch(task->page_directory);
+    strncpy(tmp, virtual, max);
+    kernel_page();
+
+    res = paging_set(task_directory, tmp, old_entry);
+    if (res < 0) {
+        res = -EIO;
+        goto out_free;
+    }
+
+    strncpy(phys, tmp, max);
+
+out_free:
+    kfree(tmp);
+
+out:
+    return res;
+}
+
+void task_save_state(struct task* task, struct interrupt_frame* frame) {
+    task->registers.ip = frame->ip;
+    task->registers.cs = frame->cs;
+    task->registers.flags = frame->flags;
+    task->registers.esp = frame->esp;
+    task->registers.ss = frame->ss;
+    task->registers.eax = frame->eax;
+    task->registers.ebp = frame->ebp;
+    task->registers.ebx = frame->ebx;
+    task->registers.ecx = frame->ecx;
+    task->registers.edi = frame->edi;
+    task->registers.edx = frame->edx;
+    task->registers.esi = frame->esi;
+}
+
+void task_current_save_state(struct interrupt_frame* frame) {
+    if (!task_current()) {
+        panic("No current task to save\n");
+    }
+    
+    struct task* task = task_current();
+    task_save_state(task, frame);
+}
+
+int task_page_task(struct task* task) {
+    user_registers();
+    paging_switch(task->page_directory);
     return 0;
 }
 
@@ -101,15 +169,25 @@ void task_run_first_ever_task() {
 
 int task_init(struct task* task, struct process* process) {
     memset(task, 0, sizeof(struct task));
-    task->page_directory = paging_new_4gb(PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
+    task->page_directory = paging_new_4gb(PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL | PAGING_IS_WRITEABLE);
     if (!task->page_directory) {
         return -EIO;
     }
 
     task->registers.ip = ORCAOS_PROGRAM_VIRTUAL_ADDRESS;
     task->registers.ss = USER_DATA_SEGMENT;
+    task->registers.cs = USER_CODE_SEGMENT;
     task->registers.esp = ORCAOS_PROGRAM_VIRTUAL_STACK_ADDRESS_START;
     task->process = process;
 
     return 0;
+}
+
+void* task_get_stack_item(struct task* task, int index) {
+    void* result = 0;
+    uint32_t* sp_ptr = (uint32_t*) task->registers.esp;
+    task_page_task(task);
+    result = (void*) sp_ptr[index];
+    kernel_page();
+    return result;
 }

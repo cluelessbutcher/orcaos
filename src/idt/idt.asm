@@ -7,8 +7,11 @@ global int21h
 global no_interrupt
 global enable_interrupts
 global disable_interrupts
+global isr80h_wrapper
+
 extern int21h_handler
 extern no_interrupt_handler
+extern isr80h_handler
 
 enable_interrupts:
     sti
@@ -27,17 +30,28 @@ idt_load:
 	ret
 
 int21h:
-	cli
 	pushad
 	call int21h_handler
 	popad
-	sti
 	iret
 
 no_interrupt:
-    cli
     pushad
     call no_interrupt_handler
     popad
-    sti
     iret
+
+isr80h_wrapper:
+    pushad
+    push esp
+    push eax
+    call isr80h_handler
+    mov dword[tmp_res], eax
+    add esp, 8
+    popad
+    mov eax, [tmp_res]
+    iretd
+
+section .data
+
+tmp_res: dd 0

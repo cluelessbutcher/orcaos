@@ -12,6 +12,11 @@
 #include "config.h"
 #include "memory/memory.h"
 #include "task/tss.h"
+#include "task/task.h"
+#include "task/process.h"
+#include "status.h"
+#include "isr80h/isr80h.h"
+#include "keyboard/keyboard.h"
 #include <stddef.h>
 #include <stdint.h>
 
@@ -67,6 +72,11 @@ void panic(const char* message) {
     while(1) {}
 }
 
+void kernel_page() {
+    kernel_registers();
+    paging_switch(kernel_chunk);
+}
+
 struct tss tss;
 struct gdt gdt_real[ORCAOS_TOTAL_GDT_SEGMENTS];
 struct gdt_structured gdt_structured[ORCAOS_TOTAL_GDT_SEGMENTS] = {
@@ -112,20 +122,24 @@ void kernel_main() {
     kernel_chunk = paging_new_4gb(PAGING_IS_WRITEABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
 
     // Switch to kernel paging chunk
-    paging_switch(paging_4gb_chunk_get_directory(kernel_chunk));
+    paging_switch(kernel_chunk);
     
     // Enable the system paging
     enable_paging();
 
-    // Enable the system interrupts
-    enable_interrupts();
+    // Register the kernel commands
+    isr80h_register_commands();
 
-    int fd = fopen("0:/hello.txt", "r");
-    if (fd) {
-        print("Successfuly opened hello.txt\n");
-        char buf[14];
-        fread(buf, 13, 1, fd);
-        buf[13] = 0x00;
-        print(buf);
+    // Initialize the keyboard
+    keyboard_init();
+
+    struct process* process = 0;
+    int res = process_load("0:/blank.bin", &process);
+    if (res != ORCAOS_ALL_OK) {
+        panic("Failed to open blank.bin\n");
     }
+
+    task_run_first_ever_task();
+
+    while (1) {}
 }
