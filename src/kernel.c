@@ -158,9 +158,7 @@ void kernel_main() {
     if (res != ORCAOS_ALL_OK) {
         panic("Failed to open blank.bin\n");
     }
-    
-    keyboard_push('A');
-        
+   
     task_run_first_ever_task();
 
     while (1) {}
