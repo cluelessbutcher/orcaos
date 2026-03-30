@@ -110,7 +110,6 @@ struct gdt_structured gdt_structured[ORCAOS_TOTAL_GDT_SEGMENTS] = {
 
 void kernel_main() {
 	terminal_init();
-  	print("Enter whatever bullshit you're gonna say:\n");
 
     memset(gdt_real, 0x00, sizeof(gdt_real));
     gdt_structured_to_gdt(gdt_real, gdt_structured, ORCAOS_TOTAL_GDT_SEGMENTS);
