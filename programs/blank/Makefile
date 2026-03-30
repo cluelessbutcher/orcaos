@@ -1,6 +1,7 @@
 FILES=./build/blank.o
 INCLUDES=-I../stdlib/src
-FLAGS= -g -m32
+FLAGS= -g -m32 -fno-pic -ffreestanding -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parameter -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc
+
 all: $(FILES)
 	gcc -m32 -g -T ./linker.ld -o ./blank.elf -ffreestanding -O0 -nostdlib -fpic -g $(FILES) ../stdlib/stdlib.elf
 

@@ -6,6 +6,7 @@ global print:function
 global getkey:function
 global orcaos_malloc:function
 global orcaos_free:function
+global orcaos_putchar:function
 
 print:
     push ebp
@@ -22,6 +23,16 @@ getkey:
     mov ebp, esp
     mov eax, 2
     int 0x80
+    pop ebp
+    ret
+
+orcaos_putchar:
+    push ebp
+    mov ebp, esp
+    mov eax, 3
+    push dword[ebp+8]
+    int 0x80
+    add esp, 4
     pop ebp
     ret
 
