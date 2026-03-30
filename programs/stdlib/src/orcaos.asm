@@ -1,8 +1,11 @@
 [BITS 32]
 
+section .text
+
 global print:function
 global getkey:function
 global orcaos_malloc:function
+global orcaos_free:function
 
 print:
     push ebp
@@ -26,6 +29,16 @@ orcaos_malloc:
     push ebp
     mov ebp, esp
     mov eax, 4
+    push dword[ebp+8]
+    int 0x80
+    add esp, 4
+    pop ebp
+    ret
+
+orcaos_free:
+    push ebp
+    mov ebp, esp
+    mov eax, 5
     push dword[ebp+8]
     int 0x80
     add esp, 4
