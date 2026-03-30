@@ -110,7 +110,7 @@ struct gdt_structured gdt_structured[ORCAOS_TOTAL_GDT_SEGMENTS] = {
 
 void kernel_main() {
 	terminal_init();
-  	print("Hello, World!\n");
+  	print("Enter whatever bullshit you're gonna say:\n");
 
     memset(gdt_real, 0x00, sizeof(gdt_real));
     gdt_structured_to_gdt(gdt_real, gdt_structured, ORCAOS_TOTAL_GDT_SEGMENTS);
@@ -157,8 +157,6 @@ void kernel_main() {
     int res = process_load_switch("0:/blank.elf", &process);
     if (res != ORCAOS_ALL_OK) {
         panic("Failed to open blank.elf\n");
-    } else { 
-        print("I fucking opened blank.elf nigga\n");
     }
    
     task_run_first_ever_task();

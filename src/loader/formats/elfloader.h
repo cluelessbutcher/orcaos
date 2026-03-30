@@ -34,3 +34,4 @@ int elf_process_pheaders(struct elf_file* elf_file);
 int elf_process_loaded(struct elf_file* elf_file);
 int elf_load(const char* filename, struct elf_file** file_out);
 void elf_close(struct elf_file* file);
+void* elf_phdr_phys_address(struct elf_file* file, struct elf32_phdr* phdr);
