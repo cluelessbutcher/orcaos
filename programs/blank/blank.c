@@ -2,8 +2,10 @@
 #include "stdlib.h"
 
 int main(int argc, char** argv) {
-    print("i fucking hate niggers they're black and they smell like shit\n");
-    
+    print("i fucking hate niggers they're black and they smell like shit");
+        
+    print(itoa(867));
+
     void* ptr = malloc(512);
     free(ptr);
     while (1) {
