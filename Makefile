@@ -10,6 +10,7 @@ all: ./bin/boot.bin ./bin/kernel.bin user_programs
 	sudo mount -t vfat ./bin/os.bin /mnt/d
 	sudo cp -r ./hello.txt /mnt/d
 	sudo cp -r ./programs/blank/blank.elf /mnt/d
+	sudo cp -r ./programs/shell/shell.elf /mnt/d
 	sudo umount /mnt/d
 
 ./bin/kernel.bin: $(FILES)
@@ -110,10 +111,12 @@ all: ./bin/boot.bin ./bin/kernel.bin user_programs
 	gcc $(INCLUDES) -I./src/isr80h $(FLAGS) -std=gnu99 -c ./src/isr80h/heap.c -o ./build/isr80h/heap.o
 
 user_programs:
+	cd ./programs/shell && $(MAKE) all
 	cd ./programs/stdlib && $(MAKE) all
 	cd ./programs/blank && $(MAKE) all
 
 user_programs_clean:
+	cd ./programs/shell && $(MAKE) clean
 	cd ./programs/stdlib && $(MAKE) clean
 	cd ./programs/blank && $(MAKE) clean
 
