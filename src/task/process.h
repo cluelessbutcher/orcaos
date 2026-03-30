@@ -4,14 +4,23 @@
 #include "task.h"
 #include <stdint.h>
 
+#define PROCESS_FILETYPE_ELF 0
+#define PROCESS_FILETYPE_BINARY 1
+
+typedef unsigned char PROCESS_FILETYPE;
 struct process {
     uint16_t id;
     char filename[ORCAOS_MAX_PATH];
     struct task* task;
     void* allocations[ORCAOS_MAX_PROGRAM_ALLOCATIONS];
-    void* ptr;
+    PROCESS_FILETYPE filetype;
+    union {
+        void* ptr;
+        struct elf_file* elf_file;
+    };
     void* stack;
     uint32_t size;
+    
 
     struct keyboard_buffer {
         char buffer[ORCAOS_KEYBOARD_BUFFER_SIZE];

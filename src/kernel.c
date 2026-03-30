@@ -154,9 +154,11 @@ void kernel_main() {
     keyboard_init();
 
     struct process* process = 0;
-    int res = process_load_switch("0:/blank.bin", &process);
+    int res = process_load_switch("0:/blank.elf", &process);
     if (res != ORCAOS_ALL_OK) {
-        panic("Failed to open blank.bin\n");
+        panic("Failed to open blank.elf\n");
+    } else { 
+        print("I fucking opened blank.elf nigga\n");
     }
    
     task_run_first_ever_task();

@@ -113,6 +113,8 @@ struct elf32_sym {
     elf32_word st_size;
     unsigned char st_info;
     unsigned char st_other;
-    elf32_half st_shndx;
+    elf32_half st_shndx;   
 } __attribute__((packed));
-} __attribute__((packed));
+
+void* elf_get_entry_ptr(struct elf_header* header);
+uint32_t elf_get_entrY(struct elf_header* header);
