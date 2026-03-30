@@ -11,10 +11,14 @@ int main(int argc, char** argv) {
 
     void* ptr = malloc(512);
     free(ptr);
-    while (1) {
-        if (getkey() != 0) {
-            print("Key was pressed");
-        }
-    }
+
+    orcaos_getkeyblock();
+    print("This is my second bullshit message");
+
+    char buf[1024];
+    orcaos_terminal_readline(buf, sizeof(buf), true);
+    print(buf);
+
+    while (1) {}
     return 0;
 }

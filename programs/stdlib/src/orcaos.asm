@@ -3,7 +3,7 @@
 section .text
 
 global print:function
-global getkey:function
+global orcaos_getkey:function
 global orcaos_malloc:function
 global orcaos_free:function
 global orcaos_putchar:function
@@ -18,7 +18,7 @@ print:
     pop ebp
     ret
 
-getkey:
+orcaos_getkey:
     push ebp
     mov ebp, esp
     mov eax, 2
