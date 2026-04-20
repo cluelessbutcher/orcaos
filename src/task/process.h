@@ -10,11 +10,27 @@
 #define PROCESS_FILETYPE_BINARY 1
 
 typedef unsigned char PROCESS_FILETYPE;
+
+struct process_allocation {
+    void* ptr;
+    size_t size;
+};
+
+struct command_argument {
+    char argument[512];
+    struct command_argument* next;
+};
+
+struct process_arguments {
+    int argc;
+    char** argv;
+};
+
 struct process {
     uint16_t id;
     char filename[ORCAOS_MAX_PATH];
     struct task* task;
-    void* allocations[ORCAOS_MAX_PROGRAM_ALLOCATIONS];
+    struct process_allocation allocations[ORCAOS_MAX_PROGRAM_ALLOCATIONS];
     PROCESS_FILETYPE filetype;
     union {
         void* ptr;
@@ -30,6 +46,8 @@ struct process {
         int head;
         
     } keyboard;
+
+    struct process_arguments arguments;
 };
 
 int process_switch(struct process* process);
@@ -40,3 +58,6 @@ struct process* process_current();
 struct process* process_get(int process_id);
 void* process_malloc(struct process* process, size_t size);
 void process_free(struct process* process, void* ptr);
+void process_get_arguments(struct process* process, int* argc, char*** argv);
+int process_inject_arguments(struct process* process, struct command_argument* root_argument);
+int process_terminate(struct process* process);

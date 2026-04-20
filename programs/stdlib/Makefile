@@ -1,4 +1,4 @@
-FILES=./build/start.asm.o ./build/orcaos.asm.o ./build/stdlib.o ./build/stdio.o ./build/orcaos.o
+FILES=./build/start.asm.o ./build/orcaos.asm.o ./build/stdlib.o ./build/stdio.o ./build/orcaos.o ./build/string.o ./build/memory.o ./build/start.o
 INCLUDES=-I./src
 FLAGS= -g -m32 -fno-pic -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parameter -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc
 
@@ -19,6 +19,15 @@ all: $(FILES)
 
 ./build/orcaos.o: ./src/orcaos.c
 	gcc $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/orcaos.c -o ./build/orcaos.o
+
+./build/string.o: ./src/string.c
+	gcc $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/string.c -o ./build/string.o
+
+./build/memory.o: ./src/memory.c
+	gcc $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/memory.c -o ./build/memory.o
+
+./build/start.o: ./src/start.c
+	gcc $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/start.c -o ./build/start.o
 
 clean:
 	rm -rf $(FILES)

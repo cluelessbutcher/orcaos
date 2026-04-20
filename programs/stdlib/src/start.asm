@@ -2,10 +2,12 @@
 
 global _start
 
-extern main
+extern c_start
+extern orcaos_exit
 
 section .text
 
 _start:
-    call main
-    ret
+    	call c_start
+	call orcaos_exit
+    	ret

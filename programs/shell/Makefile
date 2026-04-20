@@ -7,3 +7,7 @@ all: $(FILES)
 
 ./build/shell.o: ./src/shell.c
 	gcc $(INCLUDES) -I./ $(FLAGS) -std=gnu99 -c ./src/shell.c -o ./build/shell.o
+
+clean:
+	rm -rf $(FILES)
+	rm -rf ./shell.elf

@@ -5,11 +5,11 @@
 #include "io/io.h"
 #include "task/task.h"
 #include "status.h"
+#include "task/process.h"
 
 struct idt_desc idt_descriptors[ORCAOS_TOTAL_INTERRUPTS];
 struct idtr_desc idtr_descriptor;
-
-static INTERRUPT_CALLBACK_FUNCTION interrupt_callbacks[ORCAOS_TOTAL_INTERRUPTS];
+INTERRUPT_CALLBACK_FUNCTION interrupt_callbacks[ORCAOS_TOTAL_INTERRUPTS];
 extern void* interrupt_pointer_table[ORCAOS_TOTAL_INTERRUPTS];
 static ISR80H_COMMAND isr80h_commands[ORCAOS_MAX_ISR80H_COMMANDS];
 extern void idt_load(struct idtr_desc* ptr);
@@ -43,17 +43,34 @@ void idt_set(int interrupt_no, void* address) {
 	desc->offset_2 = (uint32_t) address >> 16;
 }
 
+void idt_handle_exception() {
+	process_terminate(task_current()->process);
+	task_next();
+}
+
+void idt_clock() {
+	outb(0x20, 0x20);
+	task_next();
+}
+
 void idt_init() {
 	memset(idt_descriptors, 0, sizeof(idt_descriptors));
 	idtr_descriptor.limit = sizeof(idt_descriptors) - 1;
 	idtr_descriptor.base = (uint32_t) idt_descriptors;
 	
-    for (int i = 0; i < ORCAOS_TOTAL_INTERRUPTS; i++) {
-        idt_set(i, interrupt_pointer_table[i]);
-    }
+    	for (int i = 0; i < ORCAOS_TOTAL_INTERRUPTS; i++) {
+        	idt_set(i, interrupt_pointer_table[i]);
+ 	}
 
 	idt_set(0, idt_zero);		
-    idt_set(0x80, isr80h_wrapper);
+    	idt_set(0x80, isr80h_wrapper);
+	
+	for (int i = 0; i < 0x20; i++) {
+		idt_register_interrupt_callback(i, idt_handle_exception);
+	}
+	
+	idt_register_interrupt_callback(0x20, idt_clock);
+	
 	idt_load(&idtr_descriptor);
 }
 

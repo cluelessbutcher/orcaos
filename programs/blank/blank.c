@@ -1,9 +1,12 @@
 #include "orcaos.h"
 #include "stdlib.h"
 #include "stdio.h"
+#include "string.h"
+#include "memory.h"
 
 int main(int argc, char** argv) {
-    printf("My age is %i", 18);
-    while (1) {}
-    return 0;
+	while (1) {
+		print(argv[0]);
+	}	
+    	return 0;
 }
